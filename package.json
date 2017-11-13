@@ -5,6 +5,10 @@
   "author": "Konstantins Onufrijevs",
   "license": "MIT",
   "main": "quick-src.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/koonuf/quick-src"
+  },
   "scripts": {
     "test": "mocha --async-only"
   },
