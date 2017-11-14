@@ -3,7 +3,7 @@
 ## What is quick-src?
 This module provides a subset of functionality of [gulp.src][gulp-src] with basically the same output format (stream of [Vinyl][vinyl] files). As its name implies, it may be useful when standard gulp.src is too slow, especially when dealing with huge directory trees with complex glob negations. 
 
-Arguably the most useful feature of this module is the ability to asynchronously check whetner there is a need to recurse further into a directory subtree, based on both input and planned output paths.
+Arguably the most useful feature of this module is the ability to asynchronously check whether there is a need to recurse further into a directory subtree, based on both input and planned output paths.
 
 [gulp-src]: https://github.com/gulpjs/gulp/blob/master/docs/API.md
 [vinyl]: https://github.com/wearefractal/vinyl
