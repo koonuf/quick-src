@@ -87,7 +87,7 @@ function readPackageDescription(folderPath) {
 
     let packagePath = path.join(folderPath, "package.json");
 
-    return fsa.readFileAsync(packagePath).then(JSON.parse).catch(err) => {
+    return fsa.readFileAsync(packagePath).then(JSON.parse).catch((err) => {
         if (err.code !== 'ENOENT') {
             throw err;
         }

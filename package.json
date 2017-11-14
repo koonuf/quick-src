@@ -7,7 +7,7 @@
   "main": "quick-src.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/koonuf/quick-src"
+    "url": "git://github.com/koonuf/quick-src.git"
   },
   "scripts": {
     "test": "mocha --async-only"
@@ -26,5 +26,12 @@
     "quick",
     "gulp",
     "src"
-  ]
+  ],
+  "bugs": {
+    "url": "https://github.com/koonuf/quick-src/issues"
+  },
+  "homepage": "https://github.com/koonuf/quick-src#readme",
+  "directories": {
+    "test": "test"
+  }
 }
