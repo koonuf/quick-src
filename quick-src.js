@@ -31,7 +31,7 @@ function quickSrc(basePath, exceptionsSpec, targetBasePath, globalExcludeSpec) {
         }
     }
 
-    function processDirItem(specItem, specItemMatchKeys, dirItem) { 
+    function processDirItem(specItem, specItemMatchKeys, dirItem, checkEmitRecurse) { 
 
         if (globalExcludeSpec && utils.findSpecSubItem(globalExcludeSpec, globalExcludeMatchKeys, dirItem.fileName, true)) { 
             return Promise.resolve();
@@ -39,9 +39,11 @@ function quickSrc(basePath, exceptionsSpec, targetBasePath, globalExcludeSpec) {
         
         let specSubItem = specItem && utils.findSpecSubItem(specItem, specItemMatchKeys, dirItem.fileName);
         let checkContinue = specItem && specItem._CHECK_CONTINUE;
+        
+        checkEmitRecurse = (specItem && specItem._CHECK_EMIT_RECURSE) || checkEmitRecurse;
 
         let isMatch = false;
-        let forceEnqueue = false;
+        let forceEnqueue = !!checkEmitRecurse && !specSubItem;
 
         if (specSubItem) {
             if (specSubItem.constructor === Object) {
@@ -55,6 +57,14 @@ function quickSrc(basePath, exceptionsSpec, targetBasePath, globalExcludeSpec) {
         let checkPromise = checkContinue && isMatch
             ? Promise.resolve(checkContinue(dirItem.sourcePath, dirItem.targetPath))
             : Promise.resolve(true);
+        
+        if (checkEmitRecurse && isMatch) { 
+            checkPromise = checkPromise.then((doContinue) => { 
+                if (doContinue) { 
+                    return checkEmitRecurse(dirItem.sourcePath, dirItem.targetPath);
+                }
+            });
+        }
 
         return checkPromise.then((doContinue) => {
 
@@ -64,13 +74,14 @@ function quickSrc(basePath, exceptionsSpec, targetBasePath, globalExcludeSpec) {
                 processingQueue.enqueue({
                     dirItem,
                     isMatch,
-                    specItem: specSubItem && specSubItem.constructor === Object ? specSubItem : null
+                    specItem: specSubItem && specSubItem.constructor === Object ? specSubItem : null,
+                    checkEmitRecurse
                 });
             }
         });
     }
     
-    function processDir(sourceDir, targetDir, specItem) {
+    function processDir(sourceDir, targetDir, specItem, checkEmitRecurse) {
 
         return utils.getDirItems(sourceDir, targetDir).then((dirItems) => {
 
@@ -78,7 +89,7 @@ function quickSrc(basePath, exceptionsSpec, targetBasePath, globalExcludeSpec) {
     
             return Promise.reduce(
                 dirItems,
-                (t, dirItem) => processDirItem(specItem, specItemMatchKeys, dirItem), 0);
+                (t, dirItem) => processDirItem(specItem, specItemMatchKeys, dirItem, checkEmitRecurse), 0);
         });
     }
     
@@ -93,7 +104,7 @@ function quickSrc(basePath, exceptionsSpec, targetBasePath, globalExcludeSpec) {
             let processingPromise = Promise.resolve();
     
             if (qi.dirItem.sourceStat.isDirectory()) {
-                processingPromise = processDir(qi.dirItem.sourcePath, qi.dirItem.targetPath, qi.specItem);
+                processingPromise = processDir(qi.dirItem.sourcePath, qi.dirItem.targetPath, qi.specItem, qi.checkEmitRecurse);
 
             } else if (qi.isMatch && qi.dirItem.sourceStat.isFile()) { 
                 processingPromise = utils.readFileIntoQueueItem(qi);   

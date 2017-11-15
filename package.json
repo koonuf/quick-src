@@ -1,6 +1,6 @@
 {
   "name": "quick-src",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A better performing subset of gulp src",
   "author": "Konstantins Onufrijevs",
   "license": "MIT",

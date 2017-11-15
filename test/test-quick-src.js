@@ -66,6 +66,7 @@ describe(".quick-src", function () {
         let specs = {
             "/*": true,
             "/*b": {
+                "/*": true,
                 "/level2-b-1": {
                     "_CHECK_CONTINUE": check
                 }
@@ -92,6 +93,43 @@ describe(".quick-src", function () {
          
         runTest(sourceStream, assert, done);
     });
+
+    it("calls recursive emit check on each deep sub dir", function (done) {
+        
+        let checkSourcePaths = [];
+        
+        function checkEmit(sourcePath, targetPath) {
+            checkSourcePaths.push(sourcePath);
+            return sourcePath.endsWith(path.join("test-dir1", "empty.txt"));
+        }
+                    
+        let specs = {
+            "/*": true,
+            "/*b": {
+                "/*b-2": true,
+                "_CHECK_EMIT_RECURSE": checkEmit
+            }
+        };
+                        
+        let sourceStream = quickSrc(inputBase, specs, "/test/target");
+                    
+        function assert(files) {
+
+            expect(files.length).toEqual(1, "matching file count");
+            expect(files[0].stem).toEqual("empty");
+
+            expect(checkSourcePaths.length).toEqual(5, "emit check file count");
+            checkSourcePaths.sort((a, b) => a.localeCompare(b));
+            
+            expect(checkSourcePaths[0]).toEqual(path.join(inputBase, "level1-b", "level2-b-1"));
+            expect(checkSourcePaths[1]).toEqual(path.join(inputBase, "level1-b", "level2-b-1", "test-dir1"));
+            expect(checkSourcePaths[2]).toEqual(path.join(inputBase, "level1-b", "level2-b-1", "test-dir1", "empty.txt"));
+            expect(checkSourcePaths[3]).toEqual(path.join(inputBase, "level1-b", "level2-b-1", "test-dir2"));
+            expect(checkSourcePaths[4]).toEqual(path.join(inputBase, "level1-b", "level2-b-1", "test-dir2", "empty.txt"));
+        }
+                 
+        runTest(sourceStream, assert, done);
+    });    
 
     it("respects global exceptions", function (done) {
             

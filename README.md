@@ -21,7 +21,10 @@ Optional. By default, all files from _basePath_ will be streamed. This parameter
 * Thuthy non-object - exclude file from the stream (directory is a file as well)
 * Falsy value - include file in the stream (useful to override shorter key for specific files)
 
-Alternatively, _CHECK_CONTINUE_ key specifies a function, accepting full source and target paths (target path being based on 3rd parameter). This function is being called on each filename in the directory. If this function returns falsy value or Promise of falsy value, specific filename is excluded from the resulting stream. As specified in the usage example below, it can be useful for large sub-directories, where its possible to quickly decide whether there is a need to continue recursing into specific directory.
+Following are the supported non-file keys (not starting with _/_):
+
+*  __CHECK_CONTINUE_: specifies a function, accepting full source and target paths (target path being based on 3rd parameter). This function is being called on each filename in the directory. If this function returns falsy value or Promise of falsy value, specific filename is excluded from the resulting stream. As specified in the usage example below, it can be useful for large sub-directories, where its possible to quickly decide whether there is a need to continue recursing into specific directory.
+* __CHECK_EMIT_RECURSE_: specifies a function to be called recursively on all matching filenames, deep into directory tree, even if no exclude specs item exists for the directory. Useful for deepely nested directory trees or as an alternative for declarative _exceptionsSpec_ parameter. Please refer to module tests for usage example.
 
 #### targetBasePath
 Optional. Planned target directory. This directory should not exist and will never be touched. It is only used to calculate targetPath value for _CHECK_CONTINUE_ callback (possible part of 2nd parameter described above).
