@@ -54,7 +54,7 @@ function quickSrc(basePath, exceptionsSpec, targetBasePath, globalExcludeSpec) {
             isMatch = true;
         } 
 
-        let continueCheckPromise = checkContinue && isMatch
+        let continueCheckPromise = checkContinue
             ? Promise.resolve(checkContinue(dirItem.sourcePath, dirItem.targetPath))
             : Promise.resolve(true);
         

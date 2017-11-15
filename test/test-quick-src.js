@@ -182,4 +182,38 @@ describe(".quick-src", function () {
     
         runTest(sourceStream, assert, done);
     });
+
+    it("thinks falsy continuation check should not continue even with object spec", function (done) {
+        
+        let checkSourcePaths = [];
+        
+        function check(sourcePath, targetPath) {
+            checkSourcePaths.push(sourcePath);
+            return false;
+        }
+                    
+        let specs = {
+            "/*": true,
+            "/*b": {
+                "_CHECK_CONTINUE": check,
+                "/level2-b-2": {
+                }
+            }
+        };
+                        
+        let sourceStream = quickSrc(inputBase, specs, "/test/target");
+                    
+        function assert(files) {
+
+            expect(files.length).toEqual(0, "matching file count");
+            expect(checkSourcePaths.length).toEqual(2);
+        
+            checkSourcePaths.sort((a, b) => a.localeCompare(b));
+        
+            expect(checkSourcePaths[0]).toEqual(path.join(inputBase, "level1-b", "level2-b-1"));
+            expect(checkSourcePaths[1]).toEqual(path.join(inputBase, "level1-b", "level2-b-2"));
+        }
+                 
+        runTest(sourceStream, assert, done);
+    });    
 });
