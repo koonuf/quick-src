@@ -54,23 +54,21 @@ function quickSrc(basePath, exceptionsSpec, targetBasePath, globalExcludeSpec) {
             isMatch = true;
         } 
 
-        let checkPromise = checkContinue && isMatch
+        let continueCheckPromise = checkContinue && isMatch
             ? Promise.resolve(checkContinue(dirItem.sourcePath, dirItem.targetPath))
             : Promise.resolve(true);
         
-        if (checkEmitRecurse && isMatch) { 
-            checkPromise = checkPromise.then((doContinue) => { 
-                if (doContinue) { 
-                    return checkEmitRecurse(dirItem.sourcePath, dirItem.targetPath);
-                }
-            });
-        }
+        let emitCheckPromise = checkEmitRecurse && isMatch
+            ? Promise.resolve(checkEmitRecurse(dirItem.sourcePath, dirItem.targetPath))
+            : Promise.resolve(true);
 
-        return checkPromise.then((doContinue) => {
+        return Promise.join(continueCheckPromise, emitCheckPromise, (continueCheck, emitCheck) => {
 
-            if (!doContinue) { 
+            if (!continueCheck) {
                 return;
             }
+
+            isMatch = isMatch && !!emitCheck;
             
             if (isMatch || forceEnqueue) {
                 processingQueue.enqueue({
