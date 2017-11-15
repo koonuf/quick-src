@@ -5,6 +5,7 @@ const fs = require("fs");
 const fsa = Promise.promisifyAll(fs);
 const path = require("path");
 const minimatch = require("minimatch");
+const removeBomBuffer = require('remove-bom-buffer');
 
 function findSpecSubItem(specItem, specItemMatchKeys, fileName, returnFirst) { 
     
@@ -83,7 +84,7 @@ function getDirItems(sourceDir, targetDir) {
 }
 
 function readFileIntoQueueItem(queueItem) { 
-    return fsa.readFileAsync(queueItem.dirItem.sourcePath).then(data => queueItem.contents = data);
+    return fsa.readFileAsync(queueItem.dirItem.sourcePath).then(data => queueItem.contents = removeBomBuffer(data));
 }
 
 module.exports = {

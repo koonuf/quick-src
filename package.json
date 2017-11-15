@@ -1,6 +1,6 @@
 {
   "name": "quick-src",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "A better performing subset of gulp src",
   "author": "Konstantins Onufrijevs",
   "license": "MIT",
@@ -13,9 +13,10 @@
     "test": "mocha --async-only"
   },
   "dependencies": {
+    "bluebird": "^3.5.0",
     "minimatch": "^3.0.0",
-    "vinyl": "^2.0.0",
-    "bluebird": "^3.5.0"
+    "remove-bom-buffer": "^3.0.0",
+    "vinyl": "^2.0.0"
   },
   "devDependencies": {
     "expect": "^1.19.0",
