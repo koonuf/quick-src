@@ -68,7 +68,9 @@ function quickSrc(basePath, exceptionsSpec, targetBasePath, globalExcludeSpec) {
 
         return checkPromise.then((doContinue) => {
 
-            isMatch = isMatch && !!doContinue;
+            if (!doContinue) { 
+                return;
+            }
             
             if (isMatch || forceEnqueue) {
                 processingQueue.enqueue({
